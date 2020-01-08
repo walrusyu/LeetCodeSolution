@@ -325,4 +325,60 @@ public class Solution
         return result;
 
     }
+
+    public int ThreeSumClosest(int[] nums, int target)
+    {
+        if (nums.Length < 3)
+        {
+            return 0;
+        }
+
+        Array.Sort(nums);
+        var result = nums[0] + nums[1] + nums[2];
+
+        for (int k = 0; k < nums.Length - 2; k++)
+        {
+            if (nums[k] > target / 3)
+            {
+                break;
+            }
+
+            var l = k + 1;
+            var r = nums.Length - 1;
+            var t = target - nums[k];
+            var gap = int.MaxValue;
+            while (l < r)
+            {
+                var newGap = 0;
+                if (nums[l] + nums[r] == t)
+                {
+                    return target;
+                }
+                else if (nums[l] + nums[r] > t)
+                {
+                    newGap = nums[l] + nums[r] - t;
+                    r--;
+                }
+                else
+                {
+                    newGap = nums[l] + nums[r] - t;
+                    l++;
+                }
+
+                if (Math.Abs(newGap) > Math.Abs(gap))
+                {
+                    break;
+                }
+                else
+                {
+                    gap = newGap;
+                }
+            }
+            if (Math.Abs(gap) < Math.Abs(result - target))
+            {
+                result = target + gap;
+            }
+        }
+        return result;
+    }
 }
