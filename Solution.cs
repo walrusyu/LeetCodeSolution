@@ -365,14 +365,7 @@ public class Solution
                     l++;
                 }
 
-                if (Math.Abs(newGap) > Math.Abs(gap))
-                {
-                    break;
-                }
-                else
-                {
-                    gap = newGap;
-                }
+                gap = Math.Abs(gap) > Math.Abs(newGap) ? newGap : gap;
             }
             if (Math.Abs(gap) < Math.Abs(result - target))
             {
