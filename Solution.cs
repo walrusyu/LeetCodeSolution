@@ -245,85 +245,45 @@ public class Solution
             {
                 break;
             }
-
-            int i = k + 1;
-            int j = nums.Length - 1;
-            if (nums[i] == nums[k])
+            //后一个值如果与前一个值相同，则该值可能包含的所有解，前一个值肯定已经获取过
+            if (k > 0 && nums[k] == nums[k - 1])
             {
-                while (i < j && nums[i] == nums[i + 1])
-                {
-                    i++;
-                }
-                k = i - 1;
-                if (k > 0 && nums[k - 1] == nums[k] && nums[k] == 0)
-                {
-                    result.Add(new List<int> { 0, 0, 0 });
-                }
-                var temp = i + 1;
-                while (temp <= j)
-                {
-                    if (nums[i] + nums[temp] + nums[k] == 0)
-                    {
-                        result.Add(new List<int> { nums[i], nums[temp], nums[k] });
-                        break;
-                    }
-                    else
-                    {
-                        temp++;
-                    }
-                }
                 continue;
             }
 
+            int i = k + 1;
+            int j = nums.Length - 1;
             int target = -nums[k];
 
             while (i < j)
             {
-                var iMoved = false;
-                var jMoved = false;
+                //只有在命中目标时，才需要对后续值进行去重，未命中的不会录入结果，所以不需要做去重动作
                 if (nums[i] + nums[j] == target)
                 {
                     result.Add(new List<int> { nums[i], nums[j], nums[k] });
                     i++;
-                    iMoved = true;
                     j--;
-                    jMoved = true;
+                    while (i < j && nums[i] == nums[i - 1])
+                    {
+                        i++;
+                    }
+                    while (i < j && nums[j] == nums[j + 1])
+                    {
+                        j--;
+                    }
                 }
                 else if (nums[i] + nums[j] > target)
                 {
                     j--;
-                    jMoved = true;
                 }
                 else
                 {
                     i++;
-                    iMoved = true;
-                }
-
-                while (i < j)
-                {
-                    var equal = false;
-                    if (iMoved && nums[i] == nums[i - 1])
-                    {
-                        i++;
-                        equal = true;
-                    }
-                    if (jMoved && nums[j] == nums[j + 1])
-                    {
-                        j--;
-                        equal = true;
-                    }
-                    if (!equal)
-                    {
-                        break;
-                    }
                 }
             }
         }
 
-
         return result;
-
     }
 
     public int ThreeSumClosest(int[] nums, int target)
@@ -373,5 +333,64 @@ public class Solution
             }
         }
         return result;
+    }
+
+    public IList<string> LetterCombinations(string digits)
+    {
+        Dictionary<char, List<char>> dict = new Dictionary<char, List<char>>{
+            {'2',new List<char>{'a','b','c'}},
+            {'3',new List<char>{'d','e','f'}},
+            {'4',new List<char>{'g','h','i'}},
+            {'5',new List<char>{'j','k','l'}},
+            {'6',new List<char>{'m','n','o'}},
+            {'7',new List<char>{'p','q','r','s'}},
+            {'8',new List<char>{'t','u','v'}},
+            {'9',new List<char>{'w','x','y','z'}}
+        };
+
+        var root = new Node(' ');
+        var currentLevel = new List<Node> { root };
+        foreach (char digit in digits)
+        {
+            var nextLevel = new List<Node>();
+            if (!dict.ContainsKey(digit))
+                continue;
+            foreach (var node in currentLevel)
+            {
+                foreach (var value in dict[digit])
+                {
+                    var newNode = new Node(value);
+                    node.Children.Add(newNode);
+                    nextLevel.Add(newNode);
+                }
+            }
+            currentLevel = nextLevel;
+        }
+
+        List<string> result = new List<string>();
+        var array = new char[digits.Length];
+        foreach (var node in root.Children)
+        {
+            Calculate(result, array, 0, node);
+        }
+
+        return result;
+    }
+
+    public void Calculate(List<string> result, char[] array, int index, Node node)
+    {
+        array[index] = node.Value;
+        if (node.Children.Count > 0)
+        {
+            index++;
+            foreach (var child in node.Children)
+            {
+                Calculate(result, array, index, child);
+            }
+        }
+        else
+        {
+            result.Add(string.Join("", array));
+        }
     }
 }

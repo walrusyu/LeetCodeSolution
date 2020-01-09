@@ -7,9 +7,14 @@ namespace LeetCode
         static void Main(string[] args)
         {
             Solution solution = new Solution();
-            var result = solution.ThreeSumClosest(new int[] { -55,-24,-18,-11,-7,-3,4,5,6,9,11,23,33 }, 0);
+            var result = solution.LetterCombinations("123");
             Console.WriteLine(result);
             Console.ReadLine();
+        }
+
+        public static void PrintSomething(int i)
+        {
+            Console.WriteLine(i);
         }
     }
 }
