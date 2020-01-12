@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 public class Solution
 {
@@ -348,49 +346,166 @@ public class Solution
             {'9',new List<char>{'w','x','y','z'}}
         };
 
-        var root = new Node(' ');
-        var currentLevel = new List<Node> { root };
-        foreach (char digit in digits)
-        {
-            var nextLevel = new List<Node>();
-            if (!dict.ContainsKey(digit))
-                continue;
-            foreach (var node in currentLevel)
-            {
-                foreach (var value in dict[digit])
-                {
-                    var newNode = new Node(value);
-                    node.Children.Add(newNode);
-                    nextLevel.Add(newNode);
-                }
-            }
-            currentLevel = nextLevel;
-        }
-
         List<string> result = new List<string>();
         var array = new char[digits.Length];
-        foreach (var node in root.Children)
+        Calculate(result, array, ref digits, -1, dict);
+
+        return result;
+    }
+
+    public void Calculate(List<string> result, char[] array, ref string digits, int index, Dictionary<char, List<char>> dict)
+    {
+        index++;
+        if (index >= digits.Length)
         {
-            Calculate(result, array, 0, node);
+            var value = string.Join("", array);
+            if (!string.IsNullOrWhiteSpace(value))
+            {
+                result.Add(value);
+            }
+        }
+        else
+        {
+            if (!dict.ContainsKey(digits[index]))
+            {
+                array[index] = (char)0x00;
+                Calculate(result, array, ref digits, index, dict);
+            }
+            else
+            {
+                foreach (var value in dict[digits[index]])
+                {
+                    array[index] = value;
+                    Calculate(result, array, ref digits, index, dict);
+                }
+            }
+        }
+    }
+
+    public IList<IList<int>> FourSum(int[] nums, int target)
+    {
+        Array.Sort(nums);
+        var result = new List<IList<int>>();
+        if (nums.Length < 4)
+        {
+            return result;
+        }
+
+        for (int i = 0; i < nums.Length - 3; i++)
+        {
+            if (i > 0 && nums[i] == nums[i - 1])
+            {
+                continue;
+            }
+
+            for (int j = i + 1; j < nums.Length - 2; j++)
+            {
+                if (j > i + 1 && nums[j] == nums[j - 1])
+                {
+                    continue;
+                }
+
+                int l = j + 1;
+                int r = nums.Length - 1;
+                while (l < r)
+                {
+                    var temp = target - (nums[i] + nums[j]);
+                    if (nums[l] + nums[r] == temp)
+                    {
+                        result.Add(new List<int> { nums[i], nums[j], nums[l], nums[r] });
+                        l++;
+                        r--;
+                        while (l < r && nums[r] == nums[r + 1])
+                        {
+                            r--;
+                        }
+                        while (l < r && nums[l] == nums[l - 1])
+                        {
+                            l++;
+                        }
+                    }
+                    else if (nums[l] + nums[r] > temp)
+                    {
+                        r--;
+                        while (l < r && nums[r] == nums[r + 1])
+                        {
+                            r--;
+                        }
+                    }
+                    else
+                    {
+                        l++;
+                        while (l < r && nums[l] == nums[l - 1])
+                        {
+                            l++;
+                        }
+                    }
+                }
+            }
         }
 
         return result;
     }
 
-    public void Calculate(List<string> result, char[] array, int index, Node node)
+    public ListNode RemoveNthFromEnd(ListNode head, int n)
     {
-        array[index] = node.Value;
-        if (node.Children.Count > 0)
+        var result = head;
+        var target = head;
+        var index = 0;
+        var triggered = false;
+        while (head.next != null)
         {
-            index++;
-            foreach (var child in node.Children)
+            if (triggered)
             {
-                Calculate(result, array, index, child);
+                target = target.next;
             }
+            head = head.next;
+            index++;
+            if (index == n)
+            {
+                triggered = true;
+            }
+        }
+        if (!triggered)
+        {
+            result = result.next;
         }
         else
         {
-            result.Add(string.Join("", array));
+            target.next = target.next.next;
         }
+        return result;
     }
+
+    public ListNode MergeTwoLists(ListNode l1, ListNode l2)
+    {
+        var root = new ListNode(0);
+        var current = root;
+        while (l1 != null && l2 != null)
+        {
+            if(l1.val<=l2.val)
+            {
+                current.next = l1;
+                current =  current.next;
+                l1 = l1.next;
+            }
+            else
+            {
+                current.next = l2;
+                current =  current.next;
+                l2 = l2.next;
+            }
+        }
+        if (l1 == null)
+        {
+            current.next = l2;
+        }
+        else
+        {
+            current.next = l1;
+        }
+
+        return root.next;
+    }
+
 }
