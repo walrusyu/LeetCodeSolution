@@ -7,7 +7,7 @@ namespace LeetCode
         static void Main(string[] args)
         {
             Solution solution = new Solution();
-            var result = solution.FourSum(new int[] { -1, 0, -5, -2, -2, -4, 0, 1, -2 }, -9);
+            var result = solution.GenerateParenthesis(3);
             Console.WriteLine(result);
             Console.ReadLine();
         }

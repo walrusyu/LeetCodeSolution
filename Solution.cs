@@ -483,16 +483,16 @@ public class Solution
         var current = root;
         while (l1 != null && l2 != null)
         {
-            if(l1.val<=l2.val)
+            if (l1.val <= l2.val)
             {
                 current.next = l1;
-                current =  current.next;
+                current = current.next;
                 l1 = l1.next;
             }
             else
             {
                 current.next = l2;
-                current =  current.next;
+                current = current.next;
                 l2 = l2.next;
             }
         }
@@ -506,6 +506,48 @@ public class Solution
         }
 
         return root.next;
+    }
+
+    public IList<string> GenerateParenthesis(int n)
+    {
+        IList<string> result = new List<string>();
+        char[] array = new char[2 * n];
+
+        GenerateParenthesis(result, 0, 0, array);
+        return result;
+    }
+
+    private void GenerateParenthesis(IList<string> result, int n, int count, char[] array)
+    {
+        if (n >= array.Length)
+        {
+            result.Add(string.Join("", array));
+            return;
+        }
+        if (count >= array.Length / 2)
+        {
+            array[n] = ')';
+            n++;
+            GenerateParenthesis(result, n, count, array);
+        }
+        else
+        {
+            //左括号
+            array[n] = '(';
+            n++;
+            count++;
+            GenerateParenthesis(result, n, count, array);
+
+            //右括号
+            n--;
+            count--;
+            if (n <= count * 2 - 1)
+            {
+                array[n] = ')';
+                n++;
+                GenerateParenthesis(result, n, count, array);
+            }
+        }
     }
 
 }
