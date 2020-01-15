@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace LeetCode
 {
@@ -7,7 +10,7 @@ namespace LeetCode
         static void Main(string[] args)
         {
             Solution solution = new Solution();
-            var result = solution.GenerateParenthesis(3);
+            var result = solution.Divide(2147483647, 1);
             Console.WriteLine(result);
             Console.ReadLine();
         }

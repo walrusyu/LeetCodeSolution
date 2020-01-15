@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 public class Solution
 {
@@ -549,5 +550,175 @@ public class Solution
             }
         }
     }
+
+    public ListNode MergeKLists(ListNode[] lists)
+    {
+        if (lists.Length == 0)
+        {
+            return null;
+        }
+        var nodeList = lists.ToList();
+        while (nodeList.Count > 1)
+        {
+            for (int i = 0; i < nodeList.Count;)
+            {
+                if (i + 1 < nodeList.Count)
+                {
+                    var temp = MergeTwoLists(nodeList[i], nodeList[i + 1]);
+                    nodeList[i] = temp;
+                    nodeList.RemoveAt(i + 1);
+                }
+                i++;
+            }
+        }
+        return nodeList.First();
+    }
+
+    public ListNode SwapPairs(ListNode head)
+    {
+        if (head == null || head.next == null)
+        {
+            return head;
+        }
+
+        var next = head.next;
+        head.next = SwapPairs(head.next.next);
+        next.next = head;
+        return next;
+    }
+
+    public ListNode ReverseKGroup(ListNode head, int k)
+    {
+        if (head == null)
+        {
+            return null;
+        }
+        var tail = head;
+        var count = 0;
+        while (count < k - 1 && tail != null && tail.next != null)
+        {
+            var next = tail.next;
+            count++;
+            if (next == null)
+            {
+                break;
+            }
+            else
+            {
+                tail.next = next.next;
+                next.next = head;
+                head = next;
+            }
+        }
+        if (count >= k - 1)
+        {
+            tail.next = ReverseKGroup(tail.next, k);
+            return head;
+        }
+        else
+        {
+            return ReverseKGroup(head, count + 1);
+        }
+    }
+
+    public int RemoveDuplicates(int[] nums)
+    {
+        var index = 0;
+        for (var i = 0; i < nums.Length; i++)
+        {
+            while (i + 1 < nums.Length && nums[i] == nums[i + 1])
+            {
+                i++;
+            }
+            nums[index] = nums[i];
+            index++;
+        }
+        return index;
+    }
+
+    public int RemoveElement(int[] nums, int val)
+    {
+        var index = 0;
+        for (int i = 0; i < nums.Length; i++)
+        {
+            if (nums[i] != val)
+            {
+                nums[index] = nums[i];
+                index++;
+            }
+        }
+        return index;
+    }
+
+    public int StrStr(string haystack, string needle)
+    {
+        var result = -1;
+        for (int i = 0; i < haystack.Length - needle.Length + 1; i++)
+        {
+            var match = true;
+            for (var j = 0; j < needle.Length; j++)
+            {
+                if (needle[j] != haystack[i + j])
+                {
+                    match = false;
+                    break;
+                }
+            }
+            if (match)
+            {
+                result = i;
+                break;
+            }
+        }
+        return result;
+    }
+
+    public int Divide(int dividend, int divisor)
+    {
+        if (dividend == 0)
+        {
+            return 0;
+        }
+        else if (divisor == 1)
+        {
+            return dividend;
+        }
+        else if (divisor == -1)
+        {
+            if (dividend == int.MinValue)
+            {
+                return int.MaxValue;
+            }
+            else
+            {
+                return -dividend;
+            }
+        }
+        else if ((dividend < 0 && divisor > 0) || (dividend >= 0 && divisor < 0))
+        {
+            return -Divide(dividend, -divisor);
+        }
+        else if (dividend >= 0 && divisor > 0)
+        {
+            var result = 0;
+            while (dividend >= divisor)
+            {
+                dividend -= divisor;
+                result++;
+            }
+            return result;
+        }
+        else
+        {
+            var result = 0;
+            while (dividend <= divisor)
+            {
+                dividend -= divisor;
+                result++;
+            }
+            return result;
+        }
+    }
+
 
 }
