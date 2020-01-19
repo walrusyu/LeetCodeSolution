@@ -675,50 +675,65 @@ public class Solution
 
     public int Divide(int dividend, int divisor)
     {
-        if (dividend == 0)
+        if (dividend == 0 || divisor == 0)
         {
             return 0;
         }
-        else if (divisor == 1)
+        if (divisor == 1)
         {
             return dividend;
         }
-        else if (divisor == -1)
+        if (divisor == -1)
         {
-            if (dividend == int.MinValue)
-            {
-                return int.MaxValue;
-            }
-            else
-            {
-                return -dividend;
-            }
+            return dividend == int.MinValue ? int.MaxValue : -dividend;
         }
-        else if ((dividend < 0 && divisor > 0) || (dividend >= 0 && divisor < 0))
+        if (dividend < 0 && divisor < 0)
+        {
+            if (dividend > divisor)
+            {
+                return 0;
+            }
+            if (dividend == -1)
+            {
+                return 1;
+            }
+            var t1 = dividend >> 1;
+            var t2 = divisor;
+            var k = 1;
+            while (t1 <= t2)
+            {
+                t2 = t2 << 1;
+                k = k + k;
+            }
+
+            dividend = dividend - t2;
+            return k + Divide(dividend, divisor);
+        }
+        else if (dividend > 0 && divisor > 0)
+        {
+            if (dividend < divisor)
+            {
+                return 0;
+            }
+            var t1 = dividend >> 1;
+            var t2 = divisor;
+            var k = 1;
+            while (t1 >= t2)
+            {
+                t2 = t2 << 1;
+                k = k + k;
+            }
+
+            dividend = dividend - t2;
+            return k + Divide(dividend, divisor);
+        }
+        else if (dividend < 0 && divisor > 0)
         {
             return -Divide(dividend, -divisor);
         }
-        else if (dividend >= 0 && divisor > 0)
-        {
-            var result = 0;
-            while (dividend >= divisor)
-            {
-                dividend -= divisor;
-                result++;
-            }
-            return result;
-        }
         else
         {
-            var result = 0;
-            while (dividend <= divisor)
-            {
-                dividend -= divisor;
-                result++;
-            }
-            return result;
+            return -Divide(-dividend, divisor);
         }
     }
-
-
 }
