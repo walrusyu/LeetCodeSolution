@@ -736,4 +736,124 @@ public class Solution
             return -Divide(-dividend, divisor);
         }
     }
+
+    public IList<int> FindSubstring(string s, string[] words)
+    {
+        var result = new List<int>();
+        if (words.Length == 0 || words[0].Length == 0)
+        {
+            return result;
+        }
+        var wordDict = new Dictionary<string, int>();
+        foreach (var word in words)
+        {
+            if (wordDict.ContainsKey(word))
+            {
+                wordDict[word] = wordDict[word] + 1;
+            }
+            else
+            {
+                wordDict.Add(word, 1);
+            }
+        }
+
+        var step = words[0].Length;
+        var length = words.Length * words[0].Length;
+
+        var verifyDict = new Dictionary<string, int>();
+        for (int i = 0; i <= s.Length - length; i++)
+        {
+            var success = true;
+            for (int j = i; j < i + length; j = j + step)
+            {
+                var word = s.Substring(j, step);
+                if (wordDict.ContainsKey(word))
+                {
+                    if (verifyDict.ContainsKey(word))
+                    {
+                        verifyDict[word] = verifyDict[word] + 1;
+                    }
+                    else
+                    {
+                        verifyDict.Add(word, 1);
+                    }
+
+                    if (verifyDict[word] > wordDict[word])
+                    {
+                        success = false;
+                        break;
+                    }
+                }
+                else
+                {
+                    success = false;
+                    break;
+                }
+            }
+            verifyDict.Clear();
+            if (success)
+            {
+                result.Add(i);
+            }
+        }
+        return result;
+    }
+
+    public void NextPermutation(int[] nums)
+    {
+        var swapped = false;
+        for (int i = nums.Length - 2; i >= 0; i--)
+        {
+            for (int j = nums.Length - 1; j > i; j--)
+            {
+                if (nums[i] < nums[j])
+                {
+                    swapped = true;
+                    nums[i] = nums[i] + nums[j];
+                    nums[j] = nums[i] - nums[j];
+                    nums[i] = nums[i] - nums[j];
+
+                    while (j < nums.Length - 1)
+                    {
+                        if (nums[j] >= nums[j + 1])
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            j++;
+                        }
+                    }
+
+                    //倒排
+                    var length = nums.Length - (i + 1);
+                    for (var offset = 0; offset < length / 2; offset++)
+                    {
+                        var l = i + 1 + offset;
+                        var r = nums.Length - 1 - offset;
+                        nums[l] = nums[l] + nums[r];
+                        nums[r] = nums[l] - nums[r];
+                        nums[l] = nums[l] - nums[r];
+                    }
+
+                    break;
+                }
+            }
+            if (swapped)
+            {
+                break;
+            }
+        }
+
+        if (!swapped)
+        {
+            for (var i = 0; i < nums.Length / 2; i++)
+            {
+                var j = nums.Length - 1 - i;
+                nums[i] = nums[i] + nums[j];
+                nums[j] = nums[i] - nums[j];
+                nums[i] = nums[i] - nums[j];
+            }
+        }
+    }
 }
