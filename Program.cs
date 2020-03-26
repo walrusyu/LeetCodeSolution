@@ -11,7 +11,8 @@ namespace LeetCode
         {
             Solution solution = new Solution();
 
-            var result = solution.MyPow(0.00001, 2147483647);
+            var matrix = new int[][] { new int[] { 1, 2 }, new int[] { 3, 4 }, new int[] { 5, 6 }, new int[] { 7, 8 }, new int[] { 9, 10 } };
+            var result = solution.SpiralOrder(matrix);
             //var result = solution.MyPow(2.0, 10);
 
             Console.WriteLine(result);

@@ -1783,4 +1783,390 @@ public class Solution
         }
         return result;
     }
+
+    public IList<IList<string>> SolveNQueens(int n)
+    {
+        return SolveNQueens(n, 0, new Dictionary<int, int>());
+    }
+
+
+    private IList<IList<string>> SolveNQueens(int n, int row, Dictionary<int, int> dict)
+    {
+        List<IList<string>> result = new List<IList<string>>();
+        for (int i = 0; i < n; i++)
+        {
+            if (dict.ContainsKey(row * n + i) && dict[row * n + i] > 0)
+            {
+                continue;
+            }
+            else
+            {
+                if (row >= n - 1)
+                {
+                    result.Add(new List<string> { GenerateRow(n, i) });
+                }
+                else
+                {
+                    for (int j = 0; j < n; j++)
+                    {
+                        var key = row * n + j;
+                        AddKey(dict, key);
+                    }
+                    for (int j = row + 1; j < n; j++)
+                    {
+                        var offset = j - row;
+                        AddKey(dict, n * j + i);
+                        if (i - offset >= 0)
+                        {
+                            AddKey(dict, j * n + (i - offset));
+                        }
+                        if (i + offset < n)
+                        {
+                            AddKey(dict, j * n + (i + offset));
+                        }
+                    }
+                    var list = SolveNQueens(n, row + 1, dict);
+
+                    for (int j = row + 1; j < n; j++)
+                    {
+                        var offset = j - row;
+                        dict[n * j + i]--;
+                        if (i - offset >= 0)
+                        {
+                            dict[j * n + (i - offset)]--;
+                        }
+                        if (i + offset < n)
+                        {
+                            dict[j * n + (i + offset)]--;
+                        }
+                    }
+                    for (int j = 0; j < n; j++)
+                    {
+                        var key = row * n + j;
+                        dict[key]--;
+                    }
+
+                    foreach (var item in list)
+                    {
+                        var temp = new List<string> { GenerateRow(n, i) };
+                        temp.AddRange(item);
+                        result.Add(temp);
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+
+    private void AddKey<TKey>(Dictionary<TKey, int> dict, TKey key)
+    {
+        if (dict.ContainsKey(key))
+        {
+            dict[key]++;
+        }
+        else
+        {
+            dict.Add(key, 1);
+        }
+    }
+
+    private string GenerateRow(int n, int index)
+    {
+        var sb = new StringBuilder();
+        var i = 0;
+        while (i < n)
+        {
+            if (i == index)
+            {
+                sb.Append('Q');
+            }
+            else
+            {
+                sb.Append('.');
+            }
+            i++;
+        }
+        return sb.ToString();
+    }
+
+    public int TotalNQueens(int n)
+    {
+        return SolveNQueens2(n, 0, new Dictionary<int, int>());
+    }
+
+    private int SolveNQueens2(int n, int row, Dictionary<int, int> dict)
+    {
+        int result = 0;
+        for (int i = 0; i < n; i++)
+        {
+            if (dict.ContainsKey(row * n + i) && dict[row * n + i] > 0)
+            {
+                continue;
+            }
+            else
+            {
+                if (row >= n - 1)
+                {
+                    result += 1;
+                }
+                else
+                {
+                    for (int j = 0; j < n; j++)
+                    {
+                        var key = row * n + j;
+                        AddKey(dict, key);
+                    }
+                    for (int j = row + 1; j < n; j++)
+                    {
+                        var offset = j - row;
+                        AddKey(dict, n * j + i);
+                        if (i - offset >= 0)
+                        {
+                            AddKey(dict, j * n + (i - offset));
+                        }
+                        if (i + offset < n)
+                        {
+                            AddKey(dict, j * n + (i + offset));
+                        }
+                    }
+                    var count = SolveNQueens2(n, row + 1, dict);
+
+                    for (int j = row + 1; j < n; j++)
+                    {
+                        var offset = j - row;
+                        dict[n * j + i]--;
+                        if (i - offset >= 0)
+                        {
+                            dict[j * n + (i - offset)]--;
+                        }
+                        if (i + offset < n)
+                        {
+                            dict[j * n + (i + offset)]--;
+                        }
+                    }
+                    for (int j = 0; j < n; j++)
+                    {
+                        var key = row * n + j;
+                        dict[key]--;
+                    }
+
+                    result += count;
+                }
+            }
+        }
+
+        return result;
+    }
+
+    public int MaxSubArray(int[] nums)
+    {
+        var result = nums[0];
+        var sum = 0;
+        for (int i = 0; i < nums.Length; i++)
+        {
+            if (sum > 0)
+            {
+                sum += nums[i];
+            }
+            else
+            {
+                sum = nums[i];
+            }
+
+            result = Math.Max(sum, result);
+        }
+        return result;
+    }
+
+    public IList<int> SpiralOrder(int[][] matrix)
+    {
+        var result = new List<int>();
+        if (matrix.Length == 0)
+        {
+            return result;
+        }
+        var height = matrix.Length;
+        var width = matrix[0].Length;
+        for (int i = 0; i < (height - 1) / 2 + 1; i++)
+        {
+            for (int j = i; j < width - i; j++)
+            {
+                result.Add(matrix[i][j]);
+            }
+
+            for (int j = i + 1; j < height - i; j++)
+            {
+                result.Add(matrix[j][width - i - 1]);
+            }
+            if (width - 2 * i > 1 && height - 2 * i > 1)
+            {
+                for (int j = width - i - 2; j >= i; j--)
+                {
+                    result.Add(matrix[height - i - 1][j]);
+                }
+
+                for (int j = height - i - 2; j > i; j--)
+                {
+                    result.Add(matrix[j][i]);
+                }
+            }
+
+            if (width - 2 * i <= 2)
+            {
+                break;
+            }
+        }
+        return result;
+    }
+
+    public bool CanJump(int[] nums)
+    {
+        var start = 0;
+        var end = 0;
+        var minPos = 1;
+        var go = true;
+        var result = false;
+        while (go)
+        {
+            go = false;
+            var maxPos = 0;
+            for (int i = start; i <= end; i++)
+            {
+                maxPos = Math.Max(maxPos, i + nums[i]);
+            }
+
+            if (maxPos >= nums.Length - 1)
+            {
+                result = true;
+                break;
+            }
+            else if (maxPos >= minPos)
+            {
+                start = end + 1;
+                end = maxPos;
+                go = true;
+                minPos = maxPos + 1;
+            }
+
+        }
+
+        return result;
+    }
+
+    public bool CanJump2(int[] nums)
+    {
+        if (nums.Length <= 1)
+        {
+            return true;
+        }
+
+        int zeroCount = 0;
+        int zeroStart = nums.Length - 1;
+        for (int i = nums.Length - 1; i >= 0; i--)
+        {
+            if (nums[i] == 0)
+            {
+                if (zeroCount == 0)
+                {
+                    zeroStart = i;
+                }
+                zeroCount++;
+            }
+            else
+            {
+                if (zeroCount > 0 && (nums[i] + i > zeroStart || nums[i] + i >= nums.Length - 1))
+                {
+                    zeroCount = 0;
+                }
+            }
+        }
+
+        return zeroCount == 0;
+    }
+
+
+    public int[][] Merge(int[][] intervals)
+    {
+        var list = intervals.ToList();
+
+        for (int i = 0; i < list.Count - 1;)
+        {
+            var needMerge = false;
+            for (int j = i + 1; j < list.Count; j++)
+            {
+                var item1 = list[i];
+                var item2 = list[j];
+                if (item1[0] <= item2[1] && item2[0] <= item1[1])
+                {
+                    list[j] = new int[] { Math.Min(item1[0], item2[0]), Math.Max(item1[1], item2[1]) };
+                    list.RemoveAt(i);
+                    needMerge = true;
+                    break;
+                }
+            }
+            if (!needMerge)
+            {
+                i++;
+            }
+        }
+        return list.ToArray();
+    }
+
+    public int[][] Insert(int[][] intervals, int[] newInterval)
+    {
+        if (intervals.Length == 0)
+        {
+            return new int[][] { newInterval };
+        }
+        var list = intervals.ToList();
+        var found = false;
+        for (int i = 0; i < list.Count;)
+        {
+            if (found)
+            {
+                if (list[i][0] > list[i - 1][1])
+                {
+                    break;
+                }
+                else
+                {
+                    list[i - 1][1] = Math.Max(list[i - 1][1], list[i][1]);
+                    list.RemoveAt(i);
+                }
+            }
+            else
+            {
+                if (newInterval[1] < list[i][0])
+                {
+                    found = true;
+                    list.Insert(i, newInterval);
+                    break;
+                }
+                else if (newInterval[1] == list[i][0])
+                {
+                    found = true;
+                    list[i] = new int[] { newInterval[0], list[i][1] };
+                    break;
+                }
+                else if (newInterval[0] > list[i][1])
+                {
+                    i++;
+                }
+                else
+                {
+                    found = true;
+                    list[i] = new int[] { Math.Min(newInterval[0], list[i][0]), Math.Max(newInterval[1], list[i][1]) };
+                    i++;
+                }
+            }
+        }
+
+        if (!found)
+        {
+            list.Add(newInterval);
+        }
+
+        return list.ToArray();
+    }
 }
