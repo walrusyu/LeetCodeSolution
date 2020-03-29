@@ -2169,4 +2169,55 @@ public class Solution
 
         return list.ToArray();
     }
+
+    public int LengthOfLastWord(string s)
+    {
+        var length = 0;
+        for (int i = s.Length - 1; i >= 0; i--)
+        {
+            if (length > 0 && s[i] == ' ')
+            {
+                break;
+            }
+
+            if (s[i] != ' ')
+            {
+                length++;
+            }
+        }
+        return length;
+    }
+
+    public int[][] GenerateMatrix(int n)
+    {
+        var result = new int[n][];
+        for (int i = 0; i < n; i++)
+        {
+            result[i] = new int[n];
+        }
+
+        var valueTop = 1;
+        for (int i = 0; i < (n - 1) / 2 + 1; i++)
+        {
+            if (i == (n - 1) / 2 && n % 2 == 1)
+            {
+                result[i][i] = valueTop;
+                break; ;
+            }
+            var valueRight = valueTop + (n - 2 * i - 1);
+            var valueBottom = valueRight + (n - 2 * i - 1);
+            var valueLeft = valueBottom + (n - 2 * i - 1);
+            for (int j = i; j < n - i - 1; j++)
+            {
+                result[i][j] = valueTop++;
+                result[j][n - i - 1] = valueRight++;
+                result[n - i - 1][n - j - 1] = valueBottom++;
+                result[n - j - 1][i] = valueLeft++;
+            }
+
+            valueTop = valueLeft;
+        }
+        
+        return result;
+    }
 }
