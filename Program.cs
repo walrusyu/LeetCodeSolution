@@ -10,9 +10,9 @@ namespace LeetCode
         static void Main(string[] args)
         {
             Solution solution = new Solution();
-
-            var matrix = new int[][] { new int[] { 1, 2 }, new int[] { 3, 4 }, new int[] { 5, 6 }, new int[] { 7, 8 }, new int[] { 9, 10 } };
-            var result = solution.SpiralOrder(matrix);
+            var grid = new int[3][] { new int[] { 1, 3, 1 }, new int[] { 1, 5, 1 }, new int[] { 4, 2, 1 } };
+            var words = new string[] { "What", "must", "be", "acknowledgment", "shall", "be" };
+            var result = solution.FullJustify(words, 16);
             //var result = solution.MyPow(2.0, 10);
 
             Console.WriteLine(result);

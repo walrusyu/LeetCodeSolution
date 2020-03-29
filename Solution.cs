@@ -2217,7 +2217,414 @@ public class Solution
 
             valueTop = valueLeft;
         }
-        
+
+        return result;
+    }
+
+
+    public string GetPermutation(int n, int k)
+    {
+        StringBuilder sb = new StringBuilder();
+        List<int> temp = new List<int>() { 1 };
+        int[] array = new int[n];
+        array[0] = 1;
+        for (int i = 1; i < n; i++)
+        {
+            array[i] = array[i - 1] * (i + 1);
+            temp.Add(i + 1);
+        }
+
+        var index = 0;
+        while (index < n - 1)
+        {
+            if (k == 0)
+            {
+                var target = temp[0];
+                sb.Append(target);
+                temp.RemoveAt(0);
+            }
+            else
+            {
+                var divide = array[n - index - 2];
+                var a = (k - 1) / divide;
+                var target = temp[a];
+                sb.Append(target);
+                temp.RemoveAt(a);
+                k = k - a * divide;
+            }
+
+            index++;
+        }
+        sb.Append(temp[0]);
+        return sb.ToString();
+    }
+
+
+    public ListNode RotateRight(ListNode head, int k)
+    {
+        if (k == 0 || head == null)
+        {
+            return head;
+        }
+        var tail = head;
+        var length = 1;
+        while (tail.next != null)
+        {
+            length++;
+            tail = tail.next;
+        }
+
+        k = k % length;
+        if (k == 0)
+        {
+            return head;
+        }
+        tail.next = head;
+        k = length - k;
+        while (k > 1)
+        {
+            head = head.next;
+            k--;
+        }
+
+        var newHead = head.next;
+        head.next = null;
+        return newHead;
+    }
+
+    public int UniquePaths(int m, int n)
+    {
+        var dp = new int[m + 1][];
+        for (int i = 0; i < m + 1; i++)
+        {
+            dp[i] = new int[n + 1];
+        }
+        for (int i = 1; i < m + 1; i++)
+        {
+            for (int j = 1; j < n + 1; j++)
+            {
+                if (i == 1 && j == 1)
+                {
+                    dp[i][j] = 1;
+                }
+                else
+                {
+                    dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
+                }
+
+
+            }
+        }
+        return dp[m][n];
+    }
+
+    public int UniquePathsWithObstacles(int[][] obstacleGrid)
+    {
+        if (obstacleGrid[0][0] == 1)
+        {
+            return 0;
+        }
+        var m = obstacleGrid.Length;
+        var n = obstacleGrid[0].Length;
+        var dp = new int[m + 1][];
+        for (int i = 0; i < m + 1; i++)
+        {
+            dp[i] = new int[n + 1];
+        }
+        for (int i = 1; i < m + 1; i++)
+        {
+            for (int j = 1; j < n + 1; j++)
+            {
+                if (i == 1 && j == 1)
+                {
+                    dp[i][j] = 1;
+                }
+                else
+                {
+                    if (obstacleGrid[i - 1][j - 1] == 1)
+                    {
+                        dp[i][j] = 0;
+                    }
+                    else
+                    {
+                        dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
+                    }
+                }
+
+
+            }
+        }
+        return dp[m][n];
+    }
+
+    public int MinPathSum(int[][] grid)
+    {
+        var m = grid.Length;
+        var n = grid[0].Length;
+        var dp = new int[m + 1][];
+        for (int i = 0; i < m + 1; i++)
+        {
+            dp[i] = new int[n + 1];
+            dp[i][0] = int.MaxValue;
+        }
+        for (int j = 0; j < n + 1; j++)
+        {
+            dp[0][j] = int.MaxValue;
+        }
+
+        for (int i = 1; i < m + 1; i++)
+        {
+            for (int j = 1; j < n + 1; j++)
+            {
+                if (i == 1 && j == 1)
+                {
+                    dp[i][j] = grid[i - 1][j - 1];
+                }
+                else
+                {
+                    dp[i][j] = Math.Min(dp[i - 1][j], dp[i][j - 1]) + grid[i - 1][j - 1];
+                }
+            }
+        }
+        return dp[m][n];
+    }
+
+    public bool IsNumber(string s)
+    {
+        s = s.Trim();
+        var result = true;
+        var existsNumber = false;
+        var existsE = false;
+        var existsDot = false;
+        var existsSymbol = false;
+        for (int i = 0; i < s.Length; i++)
+        {
+            if ((existsDot && s[i] == '.') || (existsE && s[i] == 'e') || (existsSymbol && (s[i] == '+' || s[i] == '-')))
+            {
+                result = false;
+                break;
+            }
+
+            if (s[i] == 'e')
+            {
+                if (!existsNumber)
+                {
+                    result = false;
+                    break;
+                }
+                if (i == 0 || i == s.Length - 1)
+                {
+                    result = false;
+                    break;
+                }
+                existsE = true;
+                existsSymbol = false;
+                existsDot = false;
+                existsNumber = false;
+            }
+            else if (s[i] == '.')
+            {
+                if (existsE)
+                {
+                    result = false;
+                    break;
+                }
+                existsDot = true;
+            }
+            else if (s[i] == '+' || s[i] == '-')
+            {
+                if (existsNumber || existsDot)
+                {
+                    result = false;
+                    break;
+                }
+                existsSymbol = true;
+            }
+            else if (s[i] < '0' || s[i] > '9')
+            {
+                result = false;
+                break;
+            }
+            else
+            {
+                existsNumber = true;
+                continue;
+            }
+        }
+
+        return result && existsNumber;
+    }
+
+    public int[] PlusOne(int[] digits)
+    {
+        List<int> list = new List<int>();
+        var remainder = 1;
+        for (int i = digits.Length - 1; i >= 0; i--)
+        {
+            if (remainder == 0)
+            {
+                list.Insert(0, digits[i]);
+            }
+            else
+            {
+                var temp = digits[i] + remainder;
+                remainder = temp / 10;
+                list.Insert(0, temp % 10);
+            }
+        }
+        if (remainder > 0)
+        {
+            list.Insert(0, remainder);
+        }
+        return list.ToArray();
+    }
+
+    public string AddBinary(string a, string b)
+    {
+        var sb = new StringBuilder();
+        var i = 0;
+        var remainder = '0';
+        while (i < a.Length && i < b.Length)
+        {
+            if (a[a.Length - i - 1] == '1' && b[b.Length - i - 1] == '1')
+            {
+                sb.Insert(0, remainder);
+                remainder = '1';
+            }
+            else if (a[a.Length - i - 1] == '0' && b[b.Length - i - 1] == '0')
+            {
+                sb.Insert(0, remainder);
+                remainder = '0';
+            }
+            else
+            {
+                if (remainder == '1')
+                {
+                    sb.Insert(0, '0');
+                }
+                else
+                {
+                    sb.Insert(0, '1');
+                    remainder = '0';
+                }
+            }
+            i++;
+        }
+
+        var longerStr = a.Length > b.Length ? a : b;
+        while (i < longerStr.Length)
+        {
+            if (remainder == '0')
+            {
+                sb.Insert(0, longerStr[longerStr.Length - i - 1]);
+            }
+            else
+            {
+                if (longerStr[longerStr.Length - i - 1] == '1')
+                {
+                    sb.Insert(0, '0');
+                }
+                else
+                {
+                    sb.Insert(0, '1');
+                    remainder = '0';
+                }
+            }
+            i++;
+        }
+        if (remainder == '1')
+        {
+            sb.Insert(0, '1');
+        }
+        return sb.ToString();
+    }
+
+
+    public IList<string> FullJustify(string[] words, int maxWidth)
+    {
+        var result = new List<string>();
+        var length = 0;
+        var start = 0;
+        var end = 0;
+        for (int i = 0; i < words.Length; i++)
+        {
+            if (words[i].Length + length + (i - start) <= maxWidth)
+            {
+                length = words[i].Length + length;
+            }
+            else
+            {
+                end = i - 1;
+                var sb = new StringBuilder();
+                if (start == end)
+                {
+                    // var left = 0;
+                    // var right = 0;
+                    // var number = maxWidth - words[start].Length;
+                    // left = number / 2 + number % 2;
+                    // right = number / 2;
+                    // while (left > 0)
+                    // {
+                    //     sb.Append(' ');
+                    //     left--;
+                    // }
+                    // sb.Append(words[start]);
+                    // while (right > 0)
+                    // {
+                    //     sb.Append(' ');
+                    //     right--;
+                    // }
+                    sb.Append(words[start]);
+                    while (sb.Length < maxWidth)
+                    {
+                        sb.Append(' ');
+                    }
+                }
+                else
+                {
+                    var spaceCount = end - start;
+                    var spaceWidth = (maxWidth - length) / spaceCount;
+                    var remainder = (maxWidth - length) % spaceCount;
+                    sb.Append(words[start]);
+                    var index = 1;
+                    while (spaceCount > 0)
+                    {
+                        var width = spaceWidth + (remainder > 0 ? 1 : 0);
+                        while (width > 0)
+                        {
+                            sb.Append(' ');
+                            width--;
+                        }
+                        sb.Append(words[start + index]);
+                        index++;
+                        remainder--;
+                        spaceCount--;
+                    }
+                }
+
+                result.Add(sb.ToString());
+                length = words[i].Length;
+                start = i;
+            }
+        }
+
+        if (length > 0)
+        {
+            var sb = new StringBuilder();
+            sb.Append(words[start]);
+            start++;
+            while (start < words.Length)
+            {
+                sb.Append(' ');
+                sb.Append(words[start]);
+                start++;
+            }
+            while (sb.Length < maxWidth)
+            {
+                sb.Append(' ');
+            }
+            result.Add(sb.ToString());
+        }
         return result;
     }
 }
