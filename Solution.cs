@@ -2627,4 +2627,116 @@ public class Solution
         }
         return result;
     }
+
+
+    public int MySqrt(int x)
+    {
+        if (x < 2)
+        {
+            return x;
+        }
+
+        int left = 0, right = x / 2;
+        while (left <= right)
+        {
+            var mid = (right + left) / 2;
+            long value = (long)mid * (long)mid;
+            if (value == x)
+            {
+                return mid;
+            }
+            else if (value < x)
+            {
+                left = mid + 1;
+            }
+            else
+            {
+                right = mid - 1;
+            }
+        }
+
+        return right;
+    }
+
+    public int ClimbStairs(int n)
+    {
+        if (n == 1)
+        {
+            return 1;
+        }
+        else if (n == 2)
+        {
+            return 2;
+        }
+        else
+        {
+            int a = 1, b = 2;
+            for (int i = 3; i <= n; i++)
+            {
+                b = a + b;
+                a = b - a;
+            }
+
+            return b;
+        }
+    }
+
+    public string SimplifyPath(string path)
+    {
+        if (string.IsNullOrEmpty(path) || path[0] != '/')
+        {
+            return null;
+        }
+        Stack<char> stack = new Stack<char>();
+        var meetDot = false;
+        stack.Push('/');
+        for (int i = 1; i < path.Length; i++)
+        {
+            if (path[i] == '.')
+            {
+                meetDot = true;
+                if (i + 1 < path.Length && path[i + 1] == '.')
+                {
+                    i += 1;
+                    if (stack.Count > 1)
+                    {
+                        stack.Pop();
+                        while (stack.First() != '/')
+                        {
+                            stack.Pop();
+                        }
+                    }
+                }
+            }
+            else if (path[i] == '/')
+            {
+                while (i + 1 < path.Length && path[i + 1] == '/')
+                {
+                    i++;
+                }
+                if (!meetDot)
+                {
+                    stack.Push(path[i]);
+                }
+                else
+                {
+                    meetDot = false;
+                }
+            }
+            else
+            {
+                stack.Push(path[i]);
+            }
+        }
+        if (stack.First() == '/' && stack.Count > 1)
+        {
+            stack.Pop();
+        }
+        StringBuilder sb = new StringBuilder();
+        while (stack.Any())
+        {
+            sb.Insert(0, stack.Pop());
+        }
+        return sb.ToString();
+    }
 }
