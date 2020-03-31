@@ -2687,56 +2687,44 @@ public class Solution
         {
             return null;
         }
-        Stack<char> stack = new Stack<char>();
-        var meetDot = false;
-        stack.Push('/');
-        for (int i = 1; i < path.Length; i++)
+        Stack<string> stack = new Stack<string>();
+        stack.Push("/");
+        var array = path.Split('/');
+        foreach (var item in array)
         {
-            if (path[i] == '.')
+            if (item == "" || item == ".")
             {
-                meetDot = true;
-                if (i + 1 < path.Length && path[i + 1] == '.')
-                {
-                    i += 1;
-                    if (stack.Count > 1)
-                    {
-                        stack.Pop();
-                        while (stack.First() != '/')
-                        {
-                            stack.Pop();
-                        }
-                    }
-                }
+                continue;
             }
-            else if (path[i] == '/')
+            else if (item == "..")
             {
-                while (i + 1 < path.Length && path[i + 1] == '/')
+                if (stack.Count > 1)
                 {
-                    i++;
-                }
-                if (!meetDot)
-                {
-                    stack.Push(path[i]);
-                }
-                else
-                {
-                    meetDot = false;
+                    stack.Pop();
+                    stack.Pop();
                 }
             }
             else
             {
-                stack.Push(path[i]);
+                stack.Push(item);
+                stack.Push("/");
             }
         }
-        if (stack.First() == '/' && stack.Count > 1)
+        if (stack.Count > 1)
         {
             stack.Pop();
         }
+
         StringBuilder sb = new StringBuilder();
         while (stack.Any())
         {
             sb.Insert(0, stack.Pop());
         }
         return sb.ToString();
+    }
+
+    public int MinDistance(string word1, string word2)
+    {
+        return 0;
     }
 }
