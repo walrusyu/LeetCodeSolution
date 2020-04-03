@@ -10,12 +10,10 @@ namespace LeetCode
         static void Main(string[] args)
         {
             Solution solution = new Solution();
-            var grid = new int[3][] { new int[] { 1, 3, 1 }, new int[] { 1, 5, 1 }, new int[] { 4, 2, 1 } };
-            var words = new string[] { "What", "must", "be", "acknowledgment", "shall", "be" };
+            var grid = new char[2][] { new char[1] { 'A' }, new char[1] { 'A' } };
 
-            var result = solution.SimplifyPath("/a/../../b/../c//.//");
-            //var result = solution.MyPow(2.0, 10);
-
+            //solution.SetZeroes(grid);
+            var result = solution.Exist(grid, "AA");
             Console.WriteLine(result);
             Console.ReadLine();
         }

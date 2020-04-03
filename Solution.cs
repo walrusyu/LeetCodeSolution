@@ -2725,6 +2725,344 @@ public class Solution
 
     public int MinDistance(string word1, string word2)
     {
-        return 0;
+        int[][] dp = new int[word1.Length + 1][];
+        for (int i = 0; i < dp.Length; i++)
+        {
+            dp[i] = new int[word2.Length + 1];
+            dp[i][0] = i;
+        }
+        for (int i = 0; i < word2.Length + 1; i++)
+        {
+            dp[0][i] = i;
+        }
+        for (int i = 1; i < dp.Length; i++)
+        {
+            for (int j = 1; j < dp[0].Length; j++)
+            {
+                dp[i][j] = 1 + Math.Min(Math.Min(dp[i - 1][j], dp[i][j - 1]), dp[i - 1][j - 1] - (word1[i - 1] == word2[j - 1] ? 1 : 0));
+            }
+        }
+
+        return dp[word1.Length][word2.Length];
+    }
+
+
+    public void SetZeroes(int[][] matrix)
+    {
+        var row0_flag = false;
+        var col0_flag = false;
+
+        for (int i = 0; i < matrix.Length; i++)
+        {
+            for (int j = 0; j < matrix[0].Length; j++)
+            {
+                if (matrix[i][j] == 0)
+                {
+                    matrix[0][j] = 0;
+                    matrix[i][0] = 0;
+
+                    if (i == 0)
+                    {
+                        row0_flag = true;
+                    }
+                    if (j == 0)
+                    {
+                        col0_flag = true;
+                    }
+                }
+            }
+        }
+        for (int i = 1; i < matrix.Length; i++)
+        {
+            for (int j = 1; j < matrix[0].Length; j++)
+            {
+                if (matrix[i][0] == 0 || matrix[0][j] == 0)
+                {
+                    matrix[i][j] = 0;
+                }
+            }
+        }
+        if (row0_flag)
+        {
+            for (int i = 0; i < matrix[0].Length; i++)
+            {
+                matrix[0][i] = 0;
+            }
+        }
+        if (col0_flag)
+        {
+            for (int i = 0; i < matrix.Length; i++)
+            {
+                matrix[i][0] = 0;
+            }
+        }
+    }
+
+    public bool SearchMatrix(int[][] matrix, int target)
+    {
+        var m = matrix.Length;
+        if (m == 0)
+        {
+            return false;
+        }
+        var n = matrix[0].Length;
+        if (n == 0)
+        {
+            return false;
+        }
+
+        var left = 0;
+        var right = m * n - 1;
+        while (left <= right)
+        {
+            var mid = (left + right) / 2;
+            var i = mid / n;
+            var j = mid % n;
+            if (target == matrix[i][j])
+            {
+                return true;
+            }
+            else if (target > matrix[i][j])
+            {
+                left = mid + 1;
+            }
+            else
+            {
+                right = mid - 1;
+            }
+        }
+        return false;
+    }
+
+    public void SortColors(int[] nums)
+    {
+        var left = 0;
+        var right = nums.Length - 1;
+        var i = 0;
+        while (i <= right)
+        {
+            if (nums[i] == 0)
+            {
+                nums[i] = nums[left];
+                nums[left] = 0;
+                left++;
+                i++;
+            }
+            else if (nums[i] == 2)
+            {
+                nums[i] = nums[right];
+                nums[right] = 2;
+                right--;
+            }
+            else
+            {
+                i++;
+            }
+        }
+    }
+
+    public string MinWindow(string s, string t)
+    {
+        Dictionary<char, int[]> dict = new Dictionary<char, int[]>();
+        foreach (var character in t)
+        {
+            if (!dict.ContainsKey(character))
+            {
+                dict.Add(character, new int[2] { 1, 0 });
+            }
+            else
+            {
+                dict[character][0] += 1;
+            }
+        }
+        var result = string.Empty;
+        var minLength = int.MaxValue;
+
+        var left = 0;
+        var right = 0;
+        while (right <= s.Length - 1)
+        {
+            if (dict.ContainsKey(s[right]))
+            {
+                dict[s[right]][1] += 1;
+                while (!dict.Any(item => item.Value[1] < item.Value[0]))
+                {
+                    if (right - left + 1 < minLength)
+                    {
+                        minLength = right - left + 1;
+                        result = s.Substring(left, right - left + 1);
+                    }
+                    if (dict.ContainsKey(s[left]))
+                    {
+                        dict[s[left]][1] -= 1;
+                    }
+                    left++;
+                }
+            }
+
+            right++;
+        }
+
+        return result;
+    }
+
+    public IList<IList<int>> Combine(int n, int k)
+    {
+        return combine(new List<int>(), 1, n, k);
+    }
+
+    private IList<IList<int>> combine(IList<int> selected, int start, int n, int k)
+    {
+        var result = new List<IList<int>>();
+        if (selected.Count >= k)
+        {
+            return result;
+        }
+        for (int i = start; i <= n - (k - selected.Count) + 1; i++)
+        {
+            selected.Add(i);
+            i++;
+            var temp = combine(selected, i, n, k);
+            if (temp.Count == 0)
+            {
+                var list = new List<int>();
+                list.AddRange(selected);
+                result.Add(list);
+            }
+            else
+            {
+                foreach (var item in temp)
+                {
+                    var list = new List<int>();
+                    list.AddRange(item);
+                    result.Add(list);
+                }
+            }
+            i--;
+            selected.Remove(i);
+        }
+        return result;
+    }
+
+    public IList<IList<int>> Subsets(int[] nums)
+    {
+        var result = subsets(nums, 0);
+        return result;
+    }
+    public IList<IList<int>> subsets(int[] nums, int index)
+    {
+        if (index == nums.Length - 1)
+        {
+            return new List<IList<int>> { new List<int> { nums[index] }, new List<int> { } };
+        }
+        var result = new List<IList<int>>();
+        var number = nums[index];
+        index++;
+        var temp = subsets(nums, index);
+        foreach (var item in temp)
+        {
+            var list = new List<int> { number };
+            list.AddRange(item);
+            result.Add(list);
+            var list2 = new List<int> { };
+            list2.AddRange(item);
+            result.Add(list2);
+        }
+        return result;
+    }
+
+    public bool Exist(char[][] board, string word)
+    {
+        var height = board.Length;
+        var width = board[0].Length;
+        if (word.Length > height * width)
+        {
+            return false;
+        }
+        List<int> selected = new List<int>();
+        var result = false;
+        for (int i = 0; i < height * width; i++)
+        {
+            result = result || exist(board, word, new List<int>(), i, 0, 0);
+            if (result)
+            {
+                break;
+            }
+        }
+        return result;
+    }
+
+    public bool exist(char[][] board, string word, List<int> selected, int location, int index, int forward)
+    {
+        if (selected.Contains(location))
+        {
+            return false;
+        }
+
+        var row = location / board[0].Length;
+        var column = location % board[0].Length;
+        var result = board[row][column] == word[index];
+        if (!result)
+        {
+            return false;
+        }
+        if (board.Length == 1 && board[0].Length == 1)
+        {
+            return result;
+        }
+        var temp = index == word.Length - 1;
+        index++;
+        selected.Add(location);
+        if (row > 0 && forward != 3)
+        {
+            temp = temp || exist(board, word, selected, location - board[0].Length, index, 1);
+        }
+        if (row < board.Length - 1 && forward != 1)
+        {
+            temp = temp || exist(board, word, selected, location + board[0].Length, index, 3);
+        }
+        if (column > 0 && forward != 2)
+        {
+            temp = temp || exist(board, word, selected, location - 1, index, 4);
+        }
+        if (column < board[0].Length - 1 && forward != 4)
+        {
+            temp = temp || exist(board, word, selected, location + 1, index, 2);
+        }
+        selected.Remove(location);
+        return temp;
+    }
+
+    public int RemoveDuplicates2(int[] nums)
+    {
+        if (nums.Length == 0)
+        {
+            return 0;
+        }
+        var index = 1;
+        int result = 1;
+        int count = 1;
+        for (int i = 1; i < nums.Length; i++)
+        {
+            if (nums[i] == nums[i - 1])
+            {
+                if (count < 2)
+                {
+                    result++;
+                    count++;
+                    nums[index] = nums[i];
+                    index++;
+                }
+            }
+            else
+            {
+                count = 1;
+                result++;
+                nums[index] = nums[i];
+                index++;
+            }
+        }
+
+        return result;
     }
 }
