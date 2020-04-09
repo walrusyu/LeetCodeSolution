@@ -9,11 +9,24 @@ namespace LeetCode
     {
         static void Main(string[] args)
         {
-            Solution solution = new Solution();
-            var grid = new char[2][] { new char[1] { 'A' }, new char[1] { 'A' } };
+            // var array = new int[] { 3, 14, 15, 9, 26, 53, 5, 8, 9, 79 };
+            // var tree = TreeNode.GenerateTree(array);
 
-            //solution.SetZeroes(grid);
-            var result = solution.Exist(grid, "AA");
+
+            // var array = new int[] { 2, 1, 2 };
+            var matrix = new char[][] { new char[] { '1', '0', '1', '0', '0' }, new char[] { '1', '0', '1', '1', '1' }, new char[] { '1', '1', '1', '1', '1' }, new char[] { '1', '0', '0', '1', '0' } };
+            Solution solution = new Solution();
+
+
+            var node = new ListNode(1);
+            node.next = new ListNode(4);
+            node.next.next = new ListNode(3);
+            node.next.next.next = new ListNode(2);
+            node.next.next.next.next = new ListNode(5);
+            node.next.next.next.next.next = new ListNode(2);
+
+
+            var result = solution.IsScramble("great", "rgeat");
             Console.WriteLine(result);
             Console.ReadLine();
         }

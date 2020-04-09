@@ -3065,4 +3065,267 @@ public class Solution
 
         return result;
     }
+
+    public bool Search2(int[] nums, int target)
+    {
+        if (nums.Length == 0)
+        {
+            return false;
+        }
+        var existLeft = false;
+        if (nums[0] == target)
+        {
+            return true;
+        }
+        else if (nums[0] < target)
+        {
+            existLeft = true;
+        }
+        for (int i = 1; i < nums.Length; i++)
+        {
+            if (nums[i] == target)
+            {
+                return true;
+            }
+            else
+            {
+                if (nums[i] < nums[i - 1])
+                {
+                    if (!existLeft)
+                    {
+                        var left = i;
+                        var right = nums.Length - 1;
+                        if (target < nums[left] || target > nums[right])
+                        {
+                            break;
+                        }
+
+                        while (left <= right)
+                        {
+                            var mid = (right + left) / 2;
+                            if (nums[mid] == target)
+                            {
+                                return true;
+                            }
+                            else if (nums[mid] < target)
+                            {
+                                left = mid + 1;
+                            }
+                            else
+                            {
+                                right = mid - 1;
+                            }
+                        }
+
+                    }
+                    break;
+                }
+            }
+        }
+        return false;
+    }
+
+    public ListNode DeleteDuplicates(ListNode head)
+    {
+        var result = new ListNode(0);
+        var current = result;
+        result.next = head;
+        while (head != null && head.next != null)
+        {
+            if (head.val != head.next.val)
+            {
+                current.next = head;
+                current = head;
+            }
+            else
+            {
+                current.next = null;
+                while (head.next != null && head.val == head.next.val)
+                {
+                    head = head.next;
+                }
+            }
+            head = head.next;
+            if (head == null)
+            {
+                break;
+            }
+        }
+        current.next = head;
+
+        return result.next;
+    }
+
+    public ListNode DeleteDuplicates2(ListNode head)
+    {
+        var result = head;
+        while (head != null && head.next != null)
+        {
+            if (head.val == head.next.val)
+            {
+                head.next = head.next.next;
+            }
+            else
+            {
+                head = head.next;
+            }
+        }
+
+        return result;
+    }
+
+    public int LargestRectangleArea(int[] heights)
+    {
+        return CalculateMaxArea(heights, 0, heights.Length - 1);
+    }
+
+    public int CalculateMaxArea(int[] heights, int left, int right)
+    {
+        if (right < left)
+        {
+            return 0;
+        }
+        if (right == left)
+        {
+            return heights[left];
+        }
+
+        var minIndex = left;
+        for (int i = left + 1; i <= right; i++)
+        {
+            if (heights[i] < heights[minIndex])
+            {
+                minIndex = i;
+            }
+        }
+
+        return Math.Max(heights[minIndex] * (right - left + 1), Math.Max(CalculateMaxArea(heights, left, minIndex - 1), CalculateMaxArea(heights, minIndex + 1, right)));
+    }
+
+
+    public int LargestRectangleArea2(int[] heights)
+    {
+        if (heights == null || heights.Length == 0)
+        {
+            return 0;
+        }
+        Stack<int> stack = new Stack<int>();
+        stack.Push(-1);
+        var index = 0;
+        var maxArea = 0;
+        while (index < heights.Length)
+        {
+            while (stack.Peek() != -1 && heights[stack.Peek()] >= heights[index])
+            {
+                maxArea = Math.Max(maxArea, heights[stack.Pop()] * (index - stack.Peek() - 1));
+            }
+            stack.Push(index);
+            index++;
+        }
+
+        while (stack.Peek() != -1)
+        {
+            maxArea = Math.Max(maxArea, heights[stack.Pop()] * (heights.Length - stack.Peek() - 1));
+        }
+
+        return maxArea;
+    }
+
+
+    public int MaximalRectangle(char[][] matrix)
+    {
+        if (matrix.Length == 0 || matrix[0].Length == 0)
+        {
+            return 0;
+        }
+
+        var maxRec = 0;
+        var data = new int[matrix.Length][];
+        for (int i = 0; i < matrix.Length; i++)
+        {
+            data[i] = new int[matrix[i].Length];
+            for (int j = 0; j < matrix[i].Length; j++)
+            {
+                data[i][j] = matrix[i][j] == '1' ? (1 + (i == 0 ? 0 : data[i - 1][j])) : 0;
+            }
+
+            maxRec = Math.Max(maxRec, LargestRectangleArea2(data[i]));
+        }
+
+        return maxRec;
+    }
+
+    public ListNode Partition(ListNode head, int x)
+    {
+        ListNode leftRoot = new ListNode(1);
+        ListNode leftTail = leftRoot;
+        ListNode rightRoot = new ListNode(1);
+        ListNode rightTail = rightRoot;
+        while (head != null)
+        {
+            if (head.val < x)
+            {
+                leftTail.next = head;
+                leftTail = leftTail.next;
+            }
+            if (head.val >= x)
+            {
+                rightTail.next = head;
+                rightTail = rightTail.next;
+            }
+
+            head = head.next;
+        }
+        leftTail.next = null;
+        rightTail.next = null;
+        leftTail.next = rightRoot.next;
+        return leftRoot.next;
+    }
+
+
+    public bool IsScramble(string s1, string s2)
+    {
+        if (s1.Length != s2.Length)
+        {
+            return false;
+        }
+        var length = s1.Length;
+        if (length == 0)
+        {
+            return true;
+        }
+        if (length == 1)
+        {
+            return s1 == s2;
+        }
+
+        int[] letters = new int[26];
+        for (int i = 0; i < s1.Length; i++)
+        {
+            letters[s1[i] - 'a']++;
+            letters[s2[i] - 'a']--;
+        }
+        for (int i = 0; i < 26; i++)
+        {
+            if (letters[i] != 0)
+            {
+                return false;
+            }
+        }
+
+        var result = false;
+        for (int i = 1; i < length; i++)
+        {
+            var take = i;
+            result = result || IsScramble(s1.Substring(0, take), s2.Substring(0, take)) && IsScramble(s1.Substring(take, length - take), s2.Substring(take, length - take))
+        || IsScramble(s1.Substring(0, take), s2.Substring(length - take, take)) && IsScramble(s1.Substring(take, length - take), s2.Substring(0, length - take));
+            if (result)
+            {
+                break;
+            }
+        }
+
+        return result;
+    }
+
 }
